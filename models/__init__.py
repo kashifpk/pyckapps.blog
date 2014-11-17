@@ -21,10 +21,10 @@ class RenameTables(DeclarativeMeta):
 Base = declarative_base(metaclass=RenameTables)
 
 
-from models import Post, Category
+from models import Post, Category, Comment
 
 __all__ = ['db', 'Base',
-           'Post', 'Category'
+           'Post', 'Category', 'Comment'
            ]
 
 
