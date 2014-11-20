@@ -96,12 +96,30 @@ function submit_form(blog_action) {
   document.blog_form.submit();
   
 }
+
+function slugify(text)
+{
+  return text.toString().toLowerCase()
+  .replace(/\s+/g, '-') // Replace spaces with -
+  .replace(/[^\w\-]+/g, '') // Remove all non-word chars
+  .replace(/\-\-+/g, '-') // Replace multiple - with single -
+  .replace(/^-+/, '') // Trim - from start of text
+  .replace(/-+$/, ''); // Trim - from end of text
+}
 </script>
 </%def>
 
 <form action="${request.route_url(APP_NAME + '.add_blog')}" name="blog_form" id="blog_form" method="POST" role="form">
 <p>
-<label for="title">Title</label><br /> <input required=True data-dojo-props=" constraints: {}" data-dojo-type="dijit/form/ValidationTextBox" id="title" name="title" type="text" value=""> </p>
+<label for="title">Title</label><br />
+<input required="True"
+       data-dojo-props=" constraints: {}"
+       data-dojo-type="dijit/form/ValidationTextBox"
+       id="title"
+       name="title"
+       type="text"
+       onkeyup="document.getElementById('slug').value=slugify(document.getElementById('title').value);"
+       value=""> </p>
 
 <p>
 <label for="category_id">Category</label><br />
