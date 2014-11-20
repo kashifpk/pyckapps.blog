@@ -65,10 +65,18 @@ New Blog Post
         "dojox/editor/plugins/Smiley",
         "dojox/editor/plugins/UploadImage"
     ]);
+    
+function submit_form(blog_action) {
+  var editor = dijit.byId("_body");
+  document.getElementById('body').value = editor.attr("value");
+  document.getElementById('blog_action').value=blog_action;
+  document.blog_form.submit();
+  
+}
 </script>
 </%def>
 
-<form action="${request.route_url(APP_NAME + '.add_blog')}" method="POST" role="form">
+<form action="${request.route_url(APP_NAME + '.add_blog')}" name="blog_form" id="blog_form" method="POST" role="form">
 <p>
 <label for="title">Title</label><br /> <input required=True data-dojo-props=" constraints: {}" data-dojo-type="dijit/form/ValidationTextBox" id="title" name="title" type="text" value=""> </p>
 
@@ -90,13 +98,17 @@ New Blog Post
 <p>
 <label for="comments_allowed">Comments Allowed</label><br /> <input checked data-dojo-type="dijit/form/CheckBox" id="comments_allowed" name="comments_allowed" type="checkbox" value="y"> </p>
 
-<label for="body">Content</label><br />
-<div data-dojo-type="dijit.Editor" style="width:800px;min-height:100px;" id="body" name="body"
+<label for="_body">Content</label><br />
+<div data-dojo-type="dijit.Editor" style="width:800px;min-height:100px;" id="_body" name="_body"
      data-dojo-props="extraPlugins:['prettyprint','pagebreak','showblocknodes','preview','viewsource','save','toolbarlinebreak','normalizeindentoutdent','breadcrumb','findreplace','pastefromword','insertanchor','collapsibletoolbar','foreColor', 'hiliteColor','blockquote','smiley','uploadImage']">
     This is the <strong>default</strong> content.
 </div>
+<input type="hidden" name="body" id="body" value="" />
+<input type="hidden" name="blog_action" id="blog_action" value="" />
 
+<br /><br />
 
-<br />
-<input class="btn btn-success" type="submit" name="form.submitted" value="Add Blog Posts" />
+<button class="btn btn-success" onclick="submit_form('save');">Save</button>
+<button class="btn btn-primary" onclick="submit_form('publish');">Publish</button>
+
 </form>
