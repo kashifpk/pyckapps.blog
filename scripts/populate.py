@@ -19,10 +19,12 @@ def populate_app(engine, db_session):
     rec = db.query(Permission).filter_by(permission='blogger').first()
     if not rec:
         with transaction.manager:
+
+            # add a new role named blogger
             rec = Permission(permission='blogger',
                             description='Allow posting new blog posts')
             db_session.add(rec)
 
-    #with transaction.manager:
-    #    model = Post('Test', 'Just testing')
-    #    db_session.add(model)
+            # Only admin users can add and manage categories
+
+            # users of blogger role can add new blog posts (and manage their own posts)

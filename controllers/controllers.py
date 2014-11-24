@@ -9,16 +9,38 @@ from ..models import (
 from .. import APP_NAME, PROJECT_NAME, APP_BASE
 
 
-@view_config(route_name=APP_NAME+'.home', renderer='%s:templates/list.mako' % APP_BASE)
+@view_config(route_name=APP_NAME+'.home',
+             renderer='%s:templates/list.mako' % APP_BASE)
 def my_view(request):
     return {'APP_BASE': APP_BASE}
 
 
-@view_config(route_name=APP_NAME+'.add_blog', renderer='%s:templates/add_blog.mako' % APP_BASE)
+@view_config(route_name=APP_NAME+'.categories', renderer='%s:templates/categories.mako' % APP_BASE)
+def categories(request):
+
+    if 'POST' == request.method:
+        if 'add' == request.POST['action']:
+            category = Category(name=request.POST['name'],
+                                slug=request.POST['slug'],
+                                description=request.POST['description'])
+
+            if '' != request.POST.get('parent_category', ''):
+                category.parent_category = int(request.POST['parent_category'])
+
+            db.add(category)
+
+            request.session.flash("category added!")
+
+    categories = Category.get_tree()
+
+    return {'APP_BASE': APP_BASE, 'APP_NAME': APP_NAME,
+            'categories': categories}
+
+@view_config(route_name=APP_NAME+'.add_blog',
+             renderer='%s:templates/add_blog.mako' % APP_BASE)
 def add_blog(request):
 
     if 'POST' == request.method:
-        #print(request.POST['blog_action'])
         post = Post(title=request.POST['title'],
                     slug=request.POST['slug'],
                     keywords=request.POST['keywords'],
@@ -42,6 +64,6 @@ def add_blog(request):
         return HTTPFound(location=request.route_url('admin.PostCRUD_list'))
 
     categories = Category.get_tree()
-    print(categories)
+
     return {'APP_BASE': APP_BASE, 'APP_NAME': APP_NAME,
             'categories': categories}

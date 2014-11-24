@@ -1,21 +1,9 @@
 <%inherit file="/base.mako"/>
+<%namespace name="util" file="util.mako" />
+
 <%!
 dojo_url_prefix = "http://ajax.googleapis.com/ajax/libs/dojo/1.10.1"
 %>
-
-<%def name="categories_option_tags(records, name_prefix='')">
-    %for category in records:
-      %if name_prefix:
-        <option value="${category.id}">${name_prefix}${category.name}</option>
-      %else:
-        <option value="${category.id}">${category.name}</option>
-      %endif
-      
-      %if len(category.sub_categories)>0:
-        ${categories_option_tags(category.sub_categories, name_prefix + category.name + ' -> ')}
-      %endif
-    %endfor 
-</%def>
 
 <%def name="title()">
 New Blog Post
@@ -46,6 +34,8 @@ New Blog Post
   @import "${dojo_url_prefix}/dojox/editor/plugins/resources/css/StatusBar.css";
   @import "${dojo_url_prefix}/dojox/editor/plugins/resources/css/SafePaste.css";
 </style>
+ 
+<script src="${request.static_url(APP_BASE + ':static/common.js')}" type="text/javascript"></script>
  
 <script >
     
@@ -97,15 +87,6 @@ function submit_form(blog_action) {
   
 }
 
-function slugify(text)
-{
-  return text.toString().toLowerCase()
-  .replace(/\s+/g, '-') // Replace spaces with -
-  .replace(/[^\w\-]+/g, '') // Remove all non-word chars
-  .replace(/\-\-+/g, '-') // Replace multiple - with single -
-  .replace(/^-+/, '') // Trim - from start of text
-  .replace(/-+$/, ''); // Trim - from end of text
-}
 </script>
 </%def>
 
@@ -125,7 +106,7 @@ function slugify(text)
 <label for="category_id">Category</label><br />
 <select data-dojo-type="dijit/form/FilteringSelect" id="category_id" name="category_id">
   <option selected value=""></option>
-  ${categories_option_tags(categories)}
+  ${util.categories_option_tags(categories)}
   
 </select>
 </p>
@@ -162,7 +143,7 @@ function slugify(text)
 					{name: 'dojox.editor.plugins.TablePlugins', command: 'deleteTableColumn'},
 					{name: 'dojox.editor.plugins.TablePlugins', command: 'colorTableCell'},
 					{name: 'dojox.editor.plugins.TablePlugins', command: 'tableContextMenu'}, 
-					{name: 'prettyprint', indentBy: 3, lineLength: 80, entityMap: dojox.html.entities.html.concat(dojox.html.entities.latin)},
+					{name: 'prettyprint', indentBy: 4, lineLength: 80, entityMap: dojox.html.entities.html.concat(dojox.html.entities.latin)},
 					{name: 'dijit._editor.plugins.EnterKeyHandling', blockNodeForEnter: 'P'},
 					'normalizeindentoutdent', 'normalizestyle', {name: 'statusbar', resizer: false}, 'safepaste']">
 </div>
