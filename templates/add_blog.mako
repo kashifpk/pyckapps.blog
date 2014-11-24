@@ -105,7 +105,7 @@ function submit_form(blog_action) {
 <p>
 <label for="category_id">Category</label><br />
 <select data-dojo-type="dijit/form/FilteringSelect" id="category_id" name="category_id">
-  <option selected value=""></option>
+  <option value=""></option>
   ${util.categories_option_tags(categories)}
   
 </select>
