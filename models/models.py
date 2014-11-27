@@ -24,6 +24,15 @@ class Category(Base):
     parent_category = Column(Integer, ForeignKey(APP_NAME + "_categories.id"),
                              nullable=True)
 
+    @property
+    def parent(self):
+        "Returns the parent category object if one exists"
+
+        if not self.parent_category:
+            return None
+
+        return db.query(Category).filter_by(id=self.parent_category).first()
+
     @classmethod
     def get_tree(cls, parent_category=None):
         """
@@ -41,6 +50,24 @@ class Category(Base):
             categories.append(cat)
 
         return categories
+
+    @classmethod
+    def by_slug(cls, slug, parent_category=None):
+        """
+        Get categories tree (List) with sub categories tucked
+        under the parent categories
+        """
+
+        # This assumes that categories at the same level
+        # (same parent or no parent) don't have the same slugs
+        cat_id = None
+        if parent_category:
+            cat_id = parent_category.id
+
+        category = db.query(cls).filter_by(parent_category=cat_id,
+                                           slug=slug).first()
+
+        return category
 
 
 class Post(Base):
@@ -65,6 +92,50 @@ class Post(Base):
 
     # Relationships
     category = relationship(Category, backref=backref('blog_posts'))
+
+    @classmethod
+    def by_slug(cls, slug, category_id):
+        """
+        Get categories tree (List) with sub categories tucked
+        under the parent categories
+        """
+
+        # This assumes that categories at the same level
+        # (same parent or no parent) don't have the same slugs
+        post = db.query(cls).filter_by(category_id=category_id,
+                                       slug=slug).first()
+
+        return post
+
+    @classmethod
+    def match_by_slugs(cls, slugs):
+        """
+        Finds a blog that matches the given blog post and parent categor(y/ies) slugs
+
+
+        Example url: /development/programming/python/hello-python
+        Slugs would have ['development', 'programming', 'python', 'hello-python']
+        first three are category slugs (parent to child), last is blog's slug
+        """
+
+        current_parent = None
+        slugs.reverse()
+        print(slugs)
+        while slugs:
+            slug = slugs.pop()
+            print(slug)
+            if slugs:  # there are still more slugs so this slug is category
+                print("fetching category")
+                category = Category.by_slug(slug, current_parent)
+
+                if not category:
+                    return None
+
+                current_parent = category
+
+            else:  # this is the last slug so it's the blog post
+                print("fetching post")
+                return cls.by_slug(slug, current_parent.id)
 
 
 class Comment(Base):

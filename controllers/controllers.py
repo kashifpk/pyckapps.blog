@@ -16,9 +16,6 @@ def my_view(request):
     return {'APP_BASE': APP_BASE}
 
 
-
-
-
 @view_config(route_name=APP_NAME+'.categories',
              renderer='%s:templates/categories.mako' % APP_BASE)
 def categories_view(request):
@@ -132,3 +129,20 @@ def add_blog(request):
 
     return {'APP_BASE': APP_BASE, 'APP_NAME': APP_NAME,
             'categories': categories}
+
+
+@view_config(route_name=APP_NAME+'.view_blog',
+             renderer='%s:templates/view_blog.mako' % APP_BASE)
+def view_blog(request):
+    "Match the slugs in the url and display appropriate blog entry if found"
+
+    # TODO: category display when only category slug is given
+    slugs = list(request.matchdict.get('slugs', []))
+    print(slugs)
+    blog_post = Post.match_by_slugs(slugs)
+
+    if not blog_post:
+        return HTTPNotFound("Sorry this blog does not exist")
+
+
+    return {'APP_BASE': APP_BASE, 'APP_NAME': APP_NAME, 'blog': blog_post}
