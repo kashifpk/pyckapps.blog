@@ -143,9 +143,8 @@ function submit_form(blog_action) {
 					{name: 'dojox.editor.plugins.TablePlugins', command: 'deleteTableColumn'},
 					{name: 'dojox.editor.plugins.TablePlugins', command: 'colorTableCell'},
 					{name: 'dojox.editor.plugins.TablePlugins', command: 'tableContextMenu'}, 
-					{name: 'prettyprint', indentBy: 4, lineLength: 80, entityMap: dojox.html.entities.html.concat(dojox.html.entities.latin)},
-					{name: 'dijit._editor.plugins.EnterKeyHandling', blockNodeForEnter: 'P'},
-					'normalizeindentoutdent', 'normalizestyle', {name: 'statusbar', resizer: false}, 'safepaste']">
+					//{name: 'dijit._editor.plugins.EnterKeyHandling', blockNodeForEnter: 'P'},
+					'safepaste']">
 </div>
 
 <input type="hidden" name="body" id="body" value="" />
