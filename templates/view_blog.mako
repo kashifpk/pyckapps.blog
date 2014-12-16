@@ -7,6 +7,9 @@ ${blog.title|n}
 
 <%def name="extra_head()">
 <meta name="keywords" content="${blog.keywords}" />
+%if extra_css:
+${extra_css|n}
+%endif
 </%def>
 
 <h1>${blog.title|n}</h1>

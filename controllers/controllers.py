@@ -8,6 +8,7 @@ from ..models import (
     )
 
 from .. import APP_NAME, PROJECT_NAME, APP_BASE
+from docutils.core import publish_parts
 
 
 @view_config(route_name=APP_NAME+'.home',
@@ -131,6 +132,41 @@ def add_blog(request):
             'categories': categories}
 
 
+@view_config(route_name=APP_NAME+'.add_blog_rst',
+             renderer='%s:templates/add_blog_rst.mako' % APP_BASE)
+def add_blog_rst(request):
+
+    if 'POST' == request.method:
+        post = Post(title=request.POST['title'],
+                    slug=request.POST['slug'],
+                    keywords=request.POST['keywords'],
+                    rst_source=request.POST['body'],
+                    body=publish_parts(request.POST['body'],
+                                       writer_name='html')['html_body'])
+
+        if 'y' != request.POST.get('comments_allowed', 'n'):
+            post.comments_allowed = False
+
+        if '' != request.POST.get('category_id', ''):
+            post.category_id = int(request.POST['category_id'])
+
+
+        if 'publish' == request.POST['blog_action']:
+            post.published = True
+
+        # TODO, add user ID
+
+        db.add(post)
+
+        request.session.flash("Post added!")
+        return HTTPFound(location=request.route_url('admin.PostCRUD_list'))
+
+    categories = Category.get_tree()
+
+    return {'APP_BASE': APP_BASE, 'APP_NAME': APP_NAME,
+            'categories': categories}
+
+
 @view_config(route_name=APP_NAME+'.view_blog',
              renderer='%s:templates/view_blog.mako' % APP_BASE)
 def view_blog(request):
@@ -138,11 +174,15 @@ def view_blog(request):
 
     # TODO: category display when only category slug is given
     slugs = list(request.matchdict.get('slugs', []))
-    print(slugs)
+    #print(slugs)
     blog_post = Post.match_by_slugs(slugs)
 
     if not blog_post:
         return HTTPNotFound("Sorry this blog does not exist")
 
+    extra_css = None
+    if blog_post.rst_source:   # this is a reStructuredText post
+        extra_css = publish_parts(blog_post.rst_source, writer_name='html')['stylesheet']
 
-    return {'APP_BASE': APP_BASE, 'APP_NAME': APP_NAME, 'blog': blog_post}
+    return {'APP_BASE': APP_BASE, 'APP_NAME': APP_NAME, 'blog': blog_post,
+            'extra_css': extra_css}
