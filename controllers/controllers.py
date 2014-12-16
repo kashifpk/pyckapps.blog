@@ -54,7 +54,7 @@ def categories_view(request):
     elif 'edit' == action and 'GET' == request.method:
         try:
             category = _get_category("Cannot edit, category not found.")
-        except HTTPNotFound, exp:
+        except HTTPNotFound as exp:
             return exp
 
     elif 'edit' == action and 'POST' == request.method:
@@ -73,7 +73,7 @@ def categories_view(request):
             request.session.flash("category {name} updated!".format(
                 name=category.name))
 
-        except HTTPNotFound, exp:
+        except HTTPNotFound as exp:
             return exp
 
     elif 'delete' == action:
@@ -86,7 +86,7 @@ def categories_view(request):
             request.session.flash("category {name} deleted!".format(
                 name=category.name))
 
-        except HTTPNotFound, exp:
+        except HTTPNotFound as exp:
             return exp
         except IntegrityError:
             return HTTPNotAcceptable(
