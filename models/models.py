@@ -80,6 +80,7 @@ class Post(Base):
     slug = Column(Unicode(150), nullable=False)
     keywords = Column(Unicode(250), default=None)
     body = Column(UnicodeText, nullable=False)
+    rst_source = Column(UnicodeText)
     created = Column(DateTime, default=datetime.utcnow)
     updated = Column(DateTime, default=None)
     view_count = Column(Integer, default=0)
