@@ -13,6 +13,9 @@ New Blog Post
 <%def name="extra_head()">
 ## extra_head should be defined in project's base.mako
 
+<style>
+  textarea {font-family: monospace}
+</style>
  
 <script src="${request.static_url(APP_BASE + ':static/common.js')}" type="text/javascript"></script>
  
