@@ -64,8 +64,7 @@ function preview(){
 
 <label for="_body">Content</label><br />
 
-<div data-dojo-type="dijit/form/Textarea" style="width:90%;min-height:100px;" id="body" name="body">
-</div>
+<div data-dojo-type="dijit/form/Textarea" style="width:90%;min-height:100px;" id="body" name="body"></div>
 
 <input type="hidden" name="blog_action" id="blog_action" value="" />
 
