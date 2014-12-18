@@ -5,6 +5,8 @@ def application_routes(config):
 
     config.add_static_view('static', 'static', cache_max_age=3600)
     config.add_route(APP_NAME + '.home', '/')
+    config.add_route(APP_NAME + '.save_blog', '/save')
+    config.add_route(APP_NAME + '.upload_image', '/upload_image')
     config.add_route(APP_NAME + '.add_blog', '/new')
     config.add_route(APP_NAME + '.add_blog_rst', '/new_rst')
     config.add_route(APP_NAME + '.categories', '/categories')

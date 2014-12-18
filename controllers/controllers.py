@@ -99,29 +99,53 @@ def categories_view(request):
     return {'APP_BASE': APP_BASE, 'APP_NAME': APP_NAME,
             'categories': categories, 'action': action, 'category': category}
 
-@view_config(route_name=APP_NAME+'.add_blog',
-             renderer='%s:templates/add_blog.mako' % APP_BASE)
-def add_blog(request):
 
-    if 'POST' == request.method:
+def _save_post(request, rst):
+    "Code for saving a blog post, used by save_blog and add_blog"
+
+    if rst:
+        post = Post(title=request.POST['title'],
+                    slug=request.POST['slug'],
+                    keywords=request.POST['keywords'],
+                    rst_source=request.POST['body'],
+                    body=publish_parts(request.POST['body'],
+                                       writer_name='html')['html_body'])
+    else:
         post = Post(title=request.POST['title'],
                     slug=request.POST['slug'],
                     keywords=request.POST['keywords'],
                     body=request.POST['body'])
 
-        if 'y' != request.POST.get('comments_allowed', 'n'):
-            post.comments_allowed = False
+    if 'y' != request.POST.get('comments_allowed', 'n'):
+        post.comments_allowed = False
 
-        if '' != request.POST.get('category_id', ''):
-            post.category_id = int(request.POST['category_id'])
+    if '' != request.POST.get('category_id', ''):
+        post.category_id = int(request.POST['category_id'])
 
 
-        if 'publish' == request.POST['blog_action']:
-            post.published = True
+    if 'publish' == request.POST['blog_action']:
+        post.published = True
 
-        # TODO, add user ID
+    # TODO, add user ID
 
-        db.add(post)
+    db.add(post)
+
+
+@view_config(route_name=APP_NAME+'.save_blog', renderer="json")
+def save_blog(request):
+    "Allows saving the blog post via AJAX"
+
+    if 'POST' == request.method:
+        _save_post(request, rst=True)
+
+    return {"status": 200, "msg": "OK"}
+
+@view_config(route_name=APP_NAME+'.add_blog',
+             renderer='%s:templates/add_blog.mako' % APP_BASE)
+def add_blog(request):
+
+    if 'POST' == request.method:
+        _save_post(request, rst=False)
 
         request.session.flash("Post added!")
         return HTTPFound(location=request.route_url('admin.PostCRUD_list'))
@@ -137,26 +161,7 @@ def add_blog(request):
 def add_blog_rst(request):
 
     if 'POST' == request.method:
-        post = Post(title=request.POST['title'],
-                    slug=request.POST['slug'],
-                    keywords=request.POST['keywords'],
-                    rst_source=request.POST['body'],
-                    body=publish_parts(request.POST['body'],
-                                       writer_name='html')['html_body'])
-
-        if 'y' != request.POST.get('comments_allowed', 'n'):
-            post.comments_allowed = False
-
-        if '' != request.POST.get('category_id', ''):
-            post.category_id = int(request.POST['category_id'])
-
-
-        if 'publish' == request.POST['blog_action']:
-            post.published = True
-
-        # TODO, add user ID
-
-        db.add(post)
+        _save_post(request, rst=True)
 
         request.session.flash("Post added!")
         return HTTPFound(location=request.route_url('admin.PostCRUD_list'))
