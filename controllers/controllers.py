@@ -172,6 +172,20 @@ def add_blog_rst(request):
             'categories': categories}
 
 
+@view_config(route_name=APP_NAME+'.upload_image', renderer="json")
+def upload_image(request):
+    "Allows saving the blog post via AJAX"
+
+    if 'POST' == request.method:
+        print(request.POST)
+        for fieldname, field in request.POST.items():
+            if 'uploadedfiles[]' == fieldname:
+                print(field)
+                print(field.filename)
+
+    return {"status": 200, "msg": "OK"}
+
+
 @view_config(route_name=APP_NAME+'.view_blog',
              renderer='%s:templates/view_blog.mako' % APP_BASE)
 def view_blog(request):

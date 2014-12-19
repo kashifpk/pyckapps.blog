@@ -81,11 +81,11 @@ function preview(){
     
   </div>
   <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
-    <!--<input type="file" multiple="true" data-dojo-type="dojox/form/Uploader"
+    <input type="file" multiple="true" data-dojo-type="dojox/form/Uploader"
     data-dojo-props="
         label: 'Select Some Files',
-        url: '/tests/UploadFile.php',
-        uploadOnSelect: true">-->
+        url: '/${APP_NAME}/upload_image',
+        uploadOnSelect: true">
   </div>
 </div>
 <br /><br />
