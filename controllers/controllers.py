@@ -9,6 +9,7 @@ from ..models import (
 
 from .. import APP_NAME, PROJECT_NAME, APP_BASE
 from docutils.core import publish_parts
+from os import path
 
 
 @view_config(route_name=APP_NAME+'.home',
@@ -176,14 +177,41 @@ def add_blog_rst(request):
 def upload_image(request):
     "Allows saving the blog post via AJAX"
 
+    ret = []
     if 'POST' == request.method:
         print(request.POST)
         for fieldname, field in request.POST.items():
             if 'uploadedfiles[]' == fieldname:
                 print(field)
+                print(dir(field))
                 print(field.filename)
+                print(field.length)
+                print(field.type)
+                here = path.dirname(path.abspath(__file__))
+                filename = path.join(here, '../static/blog_images/', field.filename)
+                print(filename)
+                file_data = field.file.read()
+                open(filename, 'wb').write(file_data)
+                file_dict = {'file': request.static_url(APP_BASE + ':static/blog_images/' + field.filename),
+                             'name': field.filename,
+                             'width': 250, 'height': 250,
+                             'type': field.type, 'size': 1000,
+                             'uploadType': request.POST['uploadType']}
+                ret.append(file_dict)
 
-    return {"status": 200, "msg": "OK"}
+    #$htmldata['file'] = $download_path . $name;
+    #$htmldata['name'] = $name;
+    #$htmldata['width'] = $width;
+    #$htmldata['height'] = $height;
+    #$htmldata['type'] = $type;
+    #$htmldata['uploadType'] = $uploadType;
+    #$htmldata['size'] = filesize($file);
+    #$htmldata['additionalParams'] = $postdata;
+    #$data = $json->encode($htmldata);
+    #trace($data);
+    #print $data;
+    #return $data;
+    return ret
 
 
 @view_config(route_name=APP_NAME+'.view_blog',
