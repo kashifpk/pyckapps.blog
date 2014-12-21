@@ -13,6 +13,8 @@ New Blog Post
 <%def name="extra_head()">
 ## extra_head should be defined in project's base.mako
 
+<link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/dojo/1.10.1/dojox/form/resources/UploaderFileList.css" type="text/css" charset="utf-8" />
+
 <style>
   textarea {font-family: monospace}
 </style>
