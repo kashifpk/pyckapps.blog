@@ -10,6 +10,7 @@ from ..models import (
 from .. import APP_NAME, PROJECT_NAME, APP_BASE
 from docutils.core import publish_parts
 from os import path
+from ...visit_counter.lib import count_visit
 
 
 @view_config(route_name=APP_NAME+'.home',
@@ -226,6 +227,8 @@ def view_blog(request):
 
     if not blog_post:
         return HTTPNotFound("Sorry this blog does not exist")
+
+    count_visit(request)
 
     extra_css = None
     if blog_post.rst_source:   # this is a reStructuredText post
